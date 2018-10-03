@@ -14,10 +14,10 @@ or
     > java jp.qpg.TokenCounter
     [target folder] C:\dev\TokenCounter\src
     [target extensions] (all)
-    C:\dev\TokenCounter\src\main\java\jp\qpg\TokenCounter.java: 1417
-    C:\dev\TokenCounter\src\test\java\test\TokenCounterTest.java: 138
+    C:\dev\TokenCounter\src\main\java\jp\qpg\TokenCounter.java: 1458
+    C:\dev\TokenCounter\src\test\java\test\TokenCounterTest.java: 135
     C:\dev\TokenCounter\src\test\resources\Example.java: 51
-    3 files
+    3 files, 1644 tokens
     
 ### Specified folder, all files, token output
     java -DshowToken=true jp.qpg.TokenCounter C:\dev\TokenCounter\src\test\resources 
@@ -85,7 +85,28 @@ or
     MARK: }
     MARK: }
     C:\dev\TokenCounter\src\test\resources\Example.java: 51
-    1 files
+    1 files, 51 tokens
+
+[Example.java]
+
+    package test;
+    
+    /**
+     * Example for test
+     */
+    public class Example {
+    
+        /**
+         * @param args not use
+         */
+        public static <T> void main(String[] args) {
+            ///**/
+            int あいうえお = 1;
+            char c = '\'';
+            System.out.println("Hello\"\\\'!".length() >= 1.25);
+        }
+    }
+
 
 ### Current folder, .java, .cs files, UTF-8 encoding
     java -Dfile.encoding=UTF-8 jp.qpg.TokenCounter . .java .cs

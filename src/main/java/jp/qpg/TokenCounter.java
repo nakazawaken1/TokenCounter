@@ -54,9 +54,9 @@ public interface TokenCounter {
 		System.out.println("[target folder] " + folder);
 		String targetExtensions = extensions.length > 0 ? String.join(" ", extensions) : "(all)";
 		System.out.println("[target extensions] " + targetExtensions);
-		int files = countFiles((file, count) -> System.out.println(file.toAbsolutePath() + ": " + count), onTokenParsed,
+		int[] files = countFiles((file, count) -> System.out.println(file.toAbsolutePath() + ": " + count), onTokenParsed,
 				folder, extensions);
-		System.out.println(files + " files");
+		System.out.println(files[0] + " files, " + files[1] + " tokens");
 	}
 
 	enum TokenType {
@@ -102,9 +102,10 @@ public interface TokenCounter {
 		});
 	}
 
-	static int countFiles(BiConsumer<Path, Integer> onCounted, BiConsumer<TokenType, String> onTokenParsed, Path folder,
-			String... suffixes) {
+	static int[] countFiles(BiConsumer<Path, Integer> onCounted, BiConsumer<TokenType, String> onTokenParsed,
+			Path folder, String... suffixes) {
 		AtomicInteger files = new AtomicInteger();
+		AtomicInteger total = new AtomicInteger();
 		boolean empty = suffixes.length <= 0;
 		try {
 			Files.walkFileTree(folder, new SimpleFileVisitor<Path>() {
@@ -117,6 +118,7 @@ public interface TokenCounter {
 							int count = counter.count(source, onTokenParsed);
 							onCounted.accept(file, count);
 							files.incrementAndGet();
+							total.addAndGet(count);
 						} catch (CounterNotFoundException e) {
 							System.err.println(e.toString());
 						}
@@ -127,7 +129,7 @@ public interface TokenCounter {
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
-		return files.get();
+		return new int[] { files.get(), total.get() };
 	}
 
 	static class Java implements TokenCounter {
